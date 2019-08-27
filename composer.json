@@ -1,0 +1,21 @@
+{
+    "name": "szjcomo/bdmap",
+    "description": "这是一个百度地图组件",
+    "type": "library",
+    "require": {
+        "php": ">=5.6.0"
+    },
+    "license": "Apache-2.0",
+    "authors": [
+        {
+            "name": "como",
+            "email": "814655481@qq.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-4": {
+            "szjcomo\\bdmap\\": "src/"
+        }
+    }
+}
