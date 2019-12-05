@@ -17,5 +17,11 @@
         "psr-4": {
             "szjcomo\\bdmap\\": "src/"
         }
+    },
+    "repositories": {
+        "packagist": {
+            "type": "composer",
+            "url": "https://packagist.phpcomposer.com"
+        }
     }
 }

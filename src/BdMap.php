@@ -14,35 +14,36 @@ namespace szjcomo\bdmap;
 /**
  * 百度地图功能集合
  */
-Class BdMap{
+class BdMap
+{
 	/**
 	 * 百度地图api域名
 	 */
-	Protected const HostURL 			= 'http://api.map.baidu.com/';
+	protected const HostURL 			= 'http://api.map.baidu.com/';
 	/**
 	 * 地址经纬度转
 	 */
-	Protected const ToLatLngURL 		= 'geocoding/v3/?';
+	protected const ToLatLngURL 		= 'geocoding/v3/?';
 	/**
 	 * 经纬度转地址
 	 */
-	Protected const ToAddressURL 		= 'reverse_geocoding/v3/?';
+	protected const ToAddressURL 		= 'reverse_geocoding/v3/?';
 	/**
 	 * 步行批理计算距离
 	 */
-	Protected const DistanceWalkingURL 	= 'routematrix/v2/walking?';
+	protected const DistanceWalkingURL 	= 'routematrix/v2/walking?';
 	/**
 	 * 驾车批理计算距离
 	 */
-	Protected const DistanceDrivingURL 	= 'routematrix/v2/driving?';
+	protected const DistanceDrivingURL 	= 'routematrix/v2/driving?';
 	/**
 	 * 骑行批理计算距离
 	 */
-	Protected const DistanceRidingURL 	= 'routematrix/v2/riding?';
+	protected const DistanceRidingURL 	= 'routematrix/v2/riding?';
 	/**
 	 * 计算实时路况
 	 */
-	Protected const TrafficURL 			= 'traffic/v1/road?';
+	protected const TrafficURL 			= 'traffic/v1/road?';
 	/**
 	 * [addrTolatlng 地址转经纬度]
 	 * @Author    como
@@ -54,7 +55,8 @@ Class BdMap{
 	 * @param     [type]     $ak      [description]
 	 * @return    [type]              [description]
 	 */
-	Public static function toLatlng($address = '',$city = null,$ak = null,$options = []){
+	public static function toLatlng($address = '',$city = null,$ak = null,$options = [])
+	{
 		$map = array_merge(['address'=>$address,'city'=>$city,'ak'=>$ak,'output'=>'json'],$options);
 		$queryParams = self::toBuildParams($map);
 		try{
@@ -75,7 +77,8 @@ Class BdMap{
 	 * @param     [type]     $data [description]
 	 * @param     string     $type [description]
 	 */
-	Protected static function request($url,$data = [],$type = 'get'){
+	protected static function request($url,$data = [],$type = 'get')
+	{
 		try{
 			switch($type){
 				case 'post':
@@ -107,7 +110,8 @@ Class BdMap{
 	 * @param     array      $options [description]
 	 * @return    [type]              [description]
 	 */
-	Public static function toAddress($lat = null,$lng = null,$ak = null,$options = []){
+	public static function toAddress($lat = null,$lng = null,$ak = null,$options = [])
+	{
 		$map = array_merge(['location'=>$lat.','.$lng,'ak'=>$ak,'output'=>'json'],$options);
 		try{
 			$queryParams = self::toBuildParams($map);
@@ -127,7 +131,8 @@ Class BdMap{
 	 * @param  string     $url [description]
 	 * @return [type]          [description]
 	 */
-	static function curl_get($url = '',$header = array()){
+	public static function curl_get($url = '',$header = array())
+	{
 		$ch = curl_init();  
 		curl_setopt($ch, CURLOPT_URL, $url);  
 		curl_setopt($ch, CURLOPT_HEADER, 0);
@@ -154,7 +159,8 @@ Class BdMap{
 	 * @param  array      $postdata [description]
 	 * @return [type]               [description]
 	 */
-	static function curl_post($url,$postdata = array(),$header = array()){
+	public static function curl_post($url,$postdata = array(),$header = array())
+	{
 		$ch = curl_init($url);
 		curl_setopt($ch, CURLOPT_HEADER, 0);
 		if(empty($header)){
@@ -183,7 +189,8 @@ Class BdMap{
 	 * @param     [type]     $ak      [description]
 	 * @param     array      $options [description]
 	 */
-	Public static function distance($org = null,$dest = null,$ak = null,$options = [],$type = 'driving'){
+	public static function distance($org = null,$dest = null,$ak = null,$options = [],$type = 'driving')
+	{
 		$map = array_merge(['ak'=>$ak,'origins'=>$org,'destinations'=>$dest,'output'=>'json'],$options);
 		try{
 			$queryParams = self::toBuildParams($map);
@@ -215,7 +222,8 @@ Class BdMap{
 	 * @param     array      $options   [description]
 	 * @return    [type]                [description]
 	 */
-	Public static function traffic($road_name = null,$city = null,$ak = null,$options = []){
+	public static function traffic($road_name = null,$city = null,$ak = null,$options = [])
+	{
 		$map = array_merge(['road_name'=>$road_name,'city'=>$city,'ak'=>$ak],$options);
 		try{
 			$queryParams = self::toBuildParams($map);
@@ -235,7 +243,8 @@ Class BdMap{
 	 * @param     array      $arr [description]
 	 * @return    [type]          [description]
 	 */
-	Protected static function toBuildParams($arr = []){
+	protected static function toBuildParams($arr = [])
+	{
 		$data = [];
 		foreach($arr as $key=>$val){
 			$data[] = $key.'='.$val;
@@ -253,7 +262,87 @@ Class BdMap{
 	 * @param     boolean    $err  [description]
 	 * @return    [type]           [description]
 	 */
-	Protected static function appResult($info = '',$data = null,$err = true){
-		return ['info'=>$info,'data'=>$data,'err'=>$err];
+	protected static function appResult($info = '',$data = null,$err = true)
+	{
+		return ['info'=>$info,'message'=>$info,'data'=>$data,'err'=>$err];
+	}
+
+	/**
+	 * [searchPoint 搜索一个坐标点是否在另外一群坐标点内]
+	 * @author 	   szjcomo
+	 * @createTime 2019-12-05
+	 * 基本思想是利用射线法，计算射线与多边形各边的交点，如果是偶数，则点在多边形外，否则
+	 * 在多边形内。还会考虑一些特殊情况，如点在多边形顶点上，点在多边形边上等特殊情况。
+	 * 传值举例
+	 * $point['lng'] = '116.453101';
+	 * $point['lat'] = '39.966293';
+	 * $points[0]['lng'] = '116.319181';
+	 * $points[0]['lat'] = '39.969369';
+	 * $points[1]['lng'] = '116.453712';
+	 * $points[1]['lat'] = '39.967157';
+	 * $points[2]['lng'] = '116.456586';
+	 * $points[2]['lat'] = '39.868433';
+	 * $points[3]['lng'] = '116.326655';
+	 * $points[3]['lat'] = '39.86223';
+	 * @version   [1.5.0]
+	 * @param     [type]     $point [description]
+	 * @param     [type]     $pts   [description]
+	 * @param      array      $point  [description]
+	 * @param      array      $points [description]
+	 * @return     [type]             [description]
+	 */
+	public static function searchPoint(array $point,array $points)
+	{
+	    $N 				= count($points);
+	    $boundOrVertex 	= true; 		//如果点位于多边形的顶点或边上，也算做点在多边形内，直接返回true
+	    $intersectCount = 0;			//cross points count of x 
+	    $precision 		= 2e-10; 		//浮点类型计算时候与0比较时候的容差
+	    $p1 			= 0;			//neighbour bound vertices
+	    $p2 			= 0;
+	    $p 				= $point; 		//测试点
+	    $p1 			= $points[0];		//left vertex        
+	    for ($i = 1; $i <= $N; ++$i) {	//check all rays
+	        if ($p['lng'] == $p1['lng'] && $p['lat'] == $p1['lat']) {
+	            return $boundOrVertex;
+	        }
+	        $p2 = $points[$i % $N];        
+	        if ($p['lat'] < min($p1['lat'], $p2['lat']) || $p['lat'] > max($p1['lat'], $p2['lat'])) {
+	            $p1 = $p2; 
+	            continue;
+	        }
+	        if ($p['lat'] > min($p1['lat'], $p2['lat']) && $p['lat'] < max($p1['lat'], $p2['lat'])) {
+	            if($p['lng'] <= max($p1['lng'], $p2['lng'])){
+	                if ($p1['lat'] == $p2['lat'] && $p['lng'] >= min($p1['lng'], $p2['lng'])) {
+	                    return $boundOrVertex;
+	                }
+	                if ($p1['lng'] == $p2['lng']) {                       
+	                    if ($p1['lng'] == $p['lng']) {
+	                        return $boundOrVertex;
+	                    } else {
+	                        ++$intersectCount;
+	                    }
+	                } else {
+	                    $xinters = ($p['lat'] - $p1['lat']) * ($p2['lng'] - $p1['lng']) / ($p2['lat'] - $p1['lat']) + $p1['lng'];
+	                    if (abs($p['lng'] - $xinters) < $precision) {
+	                        return $boundOrVertex;
+	                    }
+	                    if ($p['lng'] < $xinters) {
+	                        ++$intersectCount;
+	                    } 
+	                }
+	            }
+	        } else {
+	            if ($p['lat'] == $p2['lat'] && $p['lng'] <= $p2['lng']) {
+	                $p3 = $points[($i+1) % $N];
+	                if ($p['lat'] >= min($p1['lat'], $p3['lat']) && $p['lat'] <= max($p1['lat'], $p3['lat'])) {
+	                    ++$intersectCount;
+	                } else {
+	                    $intersectCount += 2;
+	                }
+	            }
+	        }
+	        $p1 = $p2;
+	    }
+	    return !($intersectCount % 2 == 0);
 	}
 }

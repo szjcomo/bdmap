@@ -15,8 +15,22 @@ use szjcomo\bdmap\BdMap;
 $ak = 'xxx';
 
 //地址转经纬度
-$data = BdMap::toLatlng('永和市场','河源市',$ak);
+/*$data = BdMap::toLatlng('永和市场','河源市',$ak);
 print_r($data);
+*/
+
+$data = file_get_contents('points1.json');
+$options = json_decode($data,true);
+
+
+$point = ['lat'=>23.758382,'lng'=>114.703666];
+
+
+
+$result = BdMap::searchPoint($point,$options);
+var_dump($result);
+
+
 
 
 //经纬度转地址
